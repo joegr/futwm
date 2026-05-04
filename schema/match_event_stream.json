@@ -1,0 +1,1204 @@
+{
+  "$defs": {
+    "BodyPart": {
+      "description": "Body part making contact with the ball.",
+      "enum": [
+        "left_foot",
+        "right_foot",
+        "head",
+        "chest",
+        "other"
+      ],
+      "title": "BodyPart",
+      "type": "string"
+    },
+    "Card": {
+      "description": "Disciplinary card shown.",
+      "enum": [
+        "yellow",
+        "red"
+      ],
+      "title": "Card",
+      "type": "string"
+    },
+    "DribbleEvent": {
+      "additionalProperties": false,
+      "description": "Take-on or ball carry past an opponent.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "dribble",
+          "default": "dribble",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "foot": {
+          "$ref": "#/$defs/Foot",
+          "default": "right"
+        },
+        "end_x": {
+          "description": "Dribble end x-coordinate",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "End X",
+          "type": "number"
+        },
+        "end_y": {
+          "description": "Dribble end y-coordinate",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "End Y",
+          "type": "number"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "won"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y",
+        "end_x",
+        "end_y"
+      ],
+      "title": "DribbleEvent",
+      "type": "object"
+    },
+    "EventOutcome": {
+      "description": "Outcome of the event from the perspective of the acting player.\n\nSemantics\n---------\nSUCCESS        : Action achieved intended effect (pass received, touch controlled).\nFAILURE        : Generic failure not captured by a more specific code.\nBLOCKED        : Shot / pass physically blocked by an opponent.\nINTERCEPTED    : Pass read and collected by an opponent.\nOUT_OF_PLAY    : Ball left the field as a result of the action.\nGOAL           : Shot resulted in a goal.\nSAVED          : Shot stopped by the goalkeeper.\nOFF_TARGET     : Shot missed the goal frame entirely.\nWON            : Duel / tackle won possession.\nLOST           : Duel / tackle lost.\nFOUL_COMMITTED : Illegal challenge committed by the acting player.",
+      "enum": [
+        "success",
+        "failure",
+        "blocked",
+        "intercepted",
+        "out_of_play",
+        "goal",
+        "saved",
+        "off_target",
+        "won",
+        "lost",
+        "foul_committed"
+      ],
+      "title": "EventOutcome",
+      "type": "string"
+    },
+    "Foot": {
+      "description": "Foot used for the action.",
+      "enum": [
+        "left",
+        "right",
+        "both"
+      ],
+      "title": "Foot",
+      "type": "string"
+    },
+    "FoulEvent": {
+      "additionalProperties": false,
+      "description": "Illegal challenge.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "foul",
+          "default": "foul",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "fouled_player": {
+          "description": "Player who was fouled",
+          "minLength": 1,
+          "title": "Fouled Player",
+          "type": "string"
+        },
+        "card": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Card"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Card shown, if any"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "foul_committed"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y",
+        "fouled_player"
+      ],
+      "title": "FoulEvent",
+      "type": "object"
+    },
+    "GoalkeeperActionType": {
+      "description": "Goalkeeper-specific action.",
+      "enum": [
+        "save",
+        "punch",
+        "claim",
+        "distribution",
+        "dive"
+      ],
+      "title": "GoalkeeperActionType",
+      "type": "string"
+    },
+    "GoalkeeperEvent": {
+      "additionalProperties": false,
+      "description": "Goalkeeper-specific action.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "goalkeeper_action",
+          "default": "goalkeeper_action",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "gk_action_type": {
+          "$ref": "#/$defs/GoalkeeperActionType",
+          "default": "save"
+        },
+        "foot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Foot"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Foot used (distributions)"
+        },
+        "end_x": {
+          "anyOf": [
+            {
+              "description": "x-coordinate on pitch (metres, 0\u2013105)",
+              "maximum": 105.0,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Distribution target x",
+          "title": "End X"
+        },
+        "end_y": {
+          "anyOf": [
+            {
+              "description": "y-coordinate on pitch (metres, 0\u201368)",
+              "maximum": 68.0,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Distribution target y",
+          "title": "End Y"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "saved"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y"
+      ],
+      "title": "GoalkeeperEvent",
+      "type": "object"
+    },
+    "HeaderAction": {
+      "description": "Intent of a headed action.",
+      "enum": [
+        "pass",
+        "shot",
+        "clearance",
+        "flick_on"
+      ],
+      "title": "HeaderAction",
+      "type": "string"
+    },
+    "HeaderEvent": {
+      "additionalProperties": false,
+      "description": "Headed ball contact.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "header",
+          "default": "header",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "header_action": {
+          "$ref": "#/$defs/HeaderAction",
+          "default": "clearance"
+        },
+        "end_x": {
+          "description": "Headed ball destination x",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "End X",
+          "type": "number"
+        },
+        "end_y": {
+          "description": "Headed ball destination y",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "End Y",
+          "type": "number"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "success"
+        },
+        "aerial_duel": {
+          "default": false,
+          "description": "Contested with opponent",
+          "title": "Aerial Duel",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y",
+        "end_x",
+        "end_y"
+      ],
+      "title": "HeaderEvent",
+      "type": "object"
+    },
+    "MatchMetadata": {
+      "additionalProperties": false,
+      "description": "Top-level metadata for a match event stream.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "match_id": {
+          "title": "Match Id",
+          "type": "string"
+        },
+        "home_team": {
+          "minLength": 1,
+          "title": "Home Team",
+          "type": "string"
+        },
+        "away_team": {
+          "minLength": 1,
+          "title": "Away Team",
+          "type": "string"
+        },
+        "pitch_length": {
+          "default": 105.0,
+          "exclusiveMinimum": 0,
+          "title": "Pitch Length",
+          "type": "number"
+        },
+        "pitch_width": {
+          "default": 68.0,
+          "exclusiveMinimum": 0,
+          "title": "Pitch Width",
+          "type": "number"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "home_team",
+        "away_team"
+      ],
+      "title": "MatchMetadata",
+      "type": "object"
+    },
+    "PassEvent": {
+      "additionalProperties": false,
+      "description": "Deliberate distribution to a team-mate.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "pass",
+          "default": "pass",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "foot": {
+          "$ref": "#/$defs/Foot",
+          "default": "right"
+        },
+        "to_player": {
+          "description": "Intended recipient",
+          "minLength": 1,
+          "title": "To Player",
+          "type": "string"
+        },
+        "end_x": {
+          "description": "Intended destination x",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "End X",
+          "type": "number"
+        },
+        "end_y": {
+          "description": "Intended destination y",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "End Y",
+          "type": "number"
+        },
+        "pass_type": {
+          "$ref": "#/$defs/PassType",
+          "default": "short"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "success"
+        },
+        "aerial": {
+          "default": false,
+          "description": "Ball travelled through the air",
+          "title": "Aerial",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y",
+        "to_player",
+        "end_x",
+        "end_y"
+      ],
+      "title": "PassEvent",
+      "type": "object"
+    },
+    "PassType": {
+      "description": "Tactical classification of a pass.",
+      "enum": [
+        "short",
+        "long",
+        "through",
+        "cross",
+        "switch",
+        "back"
+      ],
+      "title": "PassType",
+      "type": "string"
+    },
+    "SetPieceEvent": {
+      "additionalProperties": false,
+      "description": "Dead-ball restart.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "set_piece",
+          "default": "set_piece",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "set_piece_type": {
+          "$ref": "#/$defs/SetPieceType",
+          "default": "free_kick"
+        },
+        "foot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Foot"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "to_player": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary recipient",
+          "title": "To Player"
+        },
+        "end_x": {
+          "anyOf": [
+            {
+              "description": "x-coordinate on pitch (metres, 0\u2013105)",
+              "maximum": 105.0,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delivery target x",
+          "title": "End X"
+        },
+        "end_y": {
+          "anyOf": [
+            {
+              "description": "y-coordinate on pitch (metres, 0\u201368)",
+              "maximum": 68.0,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delivery target y",
+          "title": "End Y"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "success"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y"
+      ],
+      "title": "SetPieceEvent",
+      "type": "object"
+    },
+    "SetPieceType": {
+      "description": "Dead-ball restart type.",
+      "enum": [
+        "corner_kick",
+        "free_kick",
+        "penalty",
+        "throw_in",
+        "goal_kick",
+        "kick_off"
+      ],
+      "title": "SetPieceType",
+      "type": "string"
+    },
+    "ShotEvent": {
+      "additionalProperties": false,
+      "description": "Attempt on goal.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "shot",
+          "default": "shot",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "body_part": {
+          "$ref": "#/$defs/BodyPart",
+          "default": "right_foot"
+        },
+        "end_x": {
+          "description": "Goal-frame target x",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "End X",
+          "type": "number"
+        },
+        "end_y": {
+          "description": "Goal-frame target y",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "End Y",
+          "type": "number"
+        },
+        "end_z": {
+          "default": 1.0,
+          "description": "Height at goal line (metres)",
+          "maximum": 5.0,
+          "minimum": 0.0,
+          "title": "End Z",
+          "type": "number"
+        },
+        "xg": {
+          "default": 0.0,
+          "description": "Expected goals value",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Xg",
+          "type": "number"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "off_target"
+        },
+        "first_time": {
+          "default": false,
+          "description": "Shot without preceding touch",
+          "title": "First Time",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y",
+        "end_x",
+        "end_y"
+      ],
+      "title": "ShotEvent",
+      "type": "object"
+    },
+    "TackleEvent": {
+      "additionalProperties": false,
+      "description": "Defensive challenge for the ball.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "tackle",
+          "default": "tackle",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "tackled_player": {
+          "description": "Player being challenged",
+          "minLength": 1,
+          "title": "Tackled Player",
+          "type": "string"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "won"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y",
+        "tackled_player"
+      ],
+      "title": "TackleEvent",
+      "type": "object"
+    },
+    "TouchEvent": {
+      "additionalProperties": false,
+      "description": "Ball reception or first touch \u2014 no directional intent.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "description": "Ontology version",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Unique event ID (UUID4)",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Match time in seconds from kick-off",
+          "minimum": 0.0,
+          "title": "Timestamp",
+          "type": "number"
+        },
+        "team": {
+          "description": "Team identifier",
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "description": "Player identifier",
+          "minLength": 1,
+          "title": "Player",
+          "type": "string"
+        },
+        "event_type": {
+          "const": "touch",
+          "default": "touch",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "x": {
+          "description": "Event origin x-coordinate (metres)",
+          "maximum": 105.0,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Event origin y-coordinate (metres)",
+          "maximum": 68.0,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "sequence_id": {
+          "default": 0,
+          "description": "Index within possession chain",
+          "minimum": 0,
+          "title": "Sequence Id",
+          "type": "integer"
+        },
+        "under_pressure": {
+          "default": false,
+          "description": "Opponent pressure on actor",
+          "title": "Under Pressure",
+          "type": "boolean"
+        },
+        "foot": {
+          "$ref": "#/$defs/Foot",
+          "default": "right"
+        },
+        "outcome": {
+          "$ref": "#/$defs/EventOutcome",
+          "default": "success"
+        }
+      },
+      "required": [
+        "timestamp",
+        "team",
+        "player",
+        "x",
+        "y"
+      ],
+      "title": "TouchEvent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Complete validated event stream for a match.\n\nThis is the canonical JSON interchange format.",
+  "properties": {
+    "metadata": {
+      "$ref": "#/$defs/MatchMetadata"
+    },
+    "events": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "dribble": "#/$defs/DribbleEvent",
+            "foul": "#/$defs/FoulEvent",
+            "goalkeeper_action": "#/$defs/GoalkeeperEvent",
+            "header": "#/$defs/HeaderEvent",
+            "pass": "#/$defs/PassEvent",
+            "set_piece": "#/$defs/SetPieceEvent",
+            "shot": "#/$defs/ShotEvent",
+            "tackle": "#/$defs/TackleEvent",
+            "touch": "#/$defs/TouchEvent"
+          },
+          "propertyName": "event_type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/TouchEvent"
+          },
+          {
+            "$ref": "#/$defs/PassEvent"
+          },
+          {
+            "$ref": "#/$defs/ShotEvent"
+          },
+          {
+            "$ref": "#/$defs/DribbleEvent"
+          },
+          {
+            "$ref": "#/$defs/TackleEvent"
+          },
+          {
+            "$ref": "#/$defs/HeaderEvent"
+          },
+          {
+            "$ref": "#/$defs/FoulEvent"
+          },
+          {
+            "$ref": "#/$defs/GoalkeeperEvent"
+          },
+          {
+            "$ref": "#/$defs/SetPieceEvent"
+          }
+        ]
+      },
+      "title": "Events",
+      "type": "array"
+    }
+  },
+  "required": [
+    "metadata",
+    "events"
+  ],
+  "title": "MatchEventStream",
+  "type": "object"
+}

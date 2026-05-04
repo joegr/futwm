@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soccer World Model</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <!-- ── header ─────────────────────────────────────────────────────── -->
+  <header id="app-header">
+    <div class="header-left">
+      <h1>⚽ Soccer World Model</h1>
+      <span class="subtitle">Stochastic Event Prediction</span>
+    </div>
+    <div class="header-right">
+      <label class="upload-btn" for="csv-upload">Upload CSV</label>
+      <input type="file" id="csv-upload" accept=".csv" hidden />
+      <button id="btn-load-sample">Load Sample</button>
+      <span id="match-label" class="match-label">No match loaded</span>
+    </div>
+  </header>
+
+  <!-- ── main layout ────────────────────────────────────────────────── -->
+  <div id="app-layout">
+
+    <!-- ── left panel: pitch + controls ──────────────────────────────── -->
+    <section id="panel-pitch">
+      <div id="pitch-container"></div>
+
+      <!-- transport controls -->
+      <div id="transport">
+        <button id="btn-start" title="Start">⏮</button>
+        <button id="btn-prev"  title="Previous">◀</button>
+        <button id="btn-play"  title="Play / Pause">▶</button>
+        <button id="btn-next"  title="Next">▶▶</button>
+        <button id="btn-end"   title="End">⏭</button>
+        <input  id="slider" type="range" min="0" max="0" value="0" />
+        <span   id="event-counter">0 / 0</span>
+        <select id="speed-select">
+          <option value="1000">1×</option>
+          <option value="500" selected>2×</option>
+          <option value="250">4×</option>
+          <option value="100">10×</option>
+        </select>
+      </div>
+
+      <!-- overlay toggles -->
+      <div id="overlays">
+        <label><input type="checkbox" id="chk-heatmap" /> Heatmap</label>
+        <label><input type="checkbox" id="chk-passes" checked /> Passes</label>
+        <label><input type="checkbox" id="chk-shots" checked /> Shots</label>
+        <label><input type="checkbox" id="chk-predictions" /> Predictions</label>
+        <select id="team-filter">
+          <option value="">All teams</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- ── right panel: charts ───────────────────────────────────────── -->
+    <aside id="panel-right">
+
+      <!-- event info card -->
+      <div class="card" id="card-event">
+        <h3>Current Event</h3>
+        <div id="event-info">Select an event</div>
+      </div>
+
+      <!-- prediction chart -->
+      <div class="card" id="card-prediction">
+        <h3>Next-Event Prediction</h3>
+        <div id="prediction-chart"></div>
+        <div id="prediction-detail"></div>
+      </div>
+
+      <!-- xG timeline -->
+      <div class="card" id="card-xg">
+        <h3>Cumulative xG</h3>
+        <div id="xg-chart"></div>
+      </div>
+
+      <!-- pass network -->
+      <div class="card" id="card-passnet">
+        <h3>Pass Network</h3>
+        <select id="passnet-team"></select>
+        <div id="passnet-chart"></div>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- ── event list drawer ──────────────────────────────────────────── -->
+  <section id="panel-events">
+    <h3>Event Log</h3>
+    <div id="event-list"></div>
+  </section>
+
+  <!-- ── scripts ────────────────────────────────────────────────────── -->
+  <script src="js/pitch.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

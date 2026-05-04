@@ -1,0 +1,6 @@
+numpy>=1.26.0
+scipy>=1.12.0
+dataclasses-json>=0.6.4
+typing-extensions>=4.10.0
+flask>=3.0.0
+flask-cors>=4.0.0

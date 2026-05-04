@@ -1,0 +1,131 @@
+{
+  "$defs": {
+    "EventOutcome": {
+      "description": "Outcome of the event from the perspective of the acting player.\n\nSemantics\n---------\nSUCCESS        : Action achieved intended effect (pass received, touch controlled).\nFAILURE        : Generic failure not captured by a more specific code.\nBLOCKED        : Shot / pass physically blocked by an opponent.\nINTERCEPTED    : Pass read and collected by an opponent.\nOUT_OF_PLAY    : Ball left the field as a result of the action.\nGOAL           : Shot resulted in a goal.\nSAVED          : Shot stopped by the goalkeeper.\nOFF_TARGET     : Shot missed the goal frame entirely.\nWON            : Duel / tackle won possession.\nLOST           : Duel / tackle lost.\nFOUL_COMMITTED : Illegal challenge committed by the acting player.",
+      "enum": [
+        "success",
+        "failure",
+        "blocked",
+        "intercepted",
+        "out_of_play",
+        "goal",
+        "saved",
+        "off_target",
+        "won",
+        "lost",
+        "foul_committed"
+      ],
+      "title": "EventOutcome",
+      "type": "string"
+    },
+    "Foot": {
+      "description": "Foot used for the action.",
+      "enum": [
+        "left",
+        "right",
+        "both"
+      ],
+      "title": "Foot",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Take-on or ball carry past an opponent.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1.0",
+      "description": "Ontology version",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "event_id": {
+      "description": "Unique event ID (UUID4)",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "timestamp": {
+      "description": "Match time in seconds from kick-off",
+      "minimum": 0.0,
+      "title": "Timestamp",
+      "type": "number"
+    },
+    "team": {
+      "description": "Team identifier",
+      "minLength": 1,
+      "title": "Team",
+      "type": "string"
+    },
+    "player": {
+      "description": "Player identifier",
+      "minLength": 1,
+      "title": "Player",
+      "type": "string"
+    },
+    "event_type": {
+      "const": "dribble",
+      "default": "dribble",
+      "title": "Event Type",
+      "type": "string"
+    },
+    "x": {
+      "description": "Event origin x-coordinate (metres)",
+      "maximum": 105.0,
+      "minimum": 0,
+      "title": "X",
+      "type": "number"
+    },
+    "y": {
+      "description": "Event origin y-coordinate (metres)",
+      "maximum": 68.0,
+      "minimum": 0,
+      "title": "Y",
+      "type": "number"
+    },
+    "sequence_id": {
+      "default": 0,
+      "description": "Index within possession chain",
+      "minimum": 0,
+      "title": "Sequence Id",
+      "type": "integer"
+    },
+    "under_pressure": {
+      "default": false,
+      "description": "Opponent pressure on actor",
+      "title": "Under Pressure",
+      "type": "boolean"
+    },
+    "foot": {
+      "$ref": "#/$defs/Foot",
+      "default": "right"
+    },
+    "end_x": {
+      "description": "Dribble end x-coordinate",
+      "maximum": 105.0,
+      "minimum": 0,
+      "title": "End X",
+      "type": "number"
+    },
+    "end_y": {
+      "description": "Dribble end y-coordinate",
+      "maximum": 68.0,
+      "minimum": 0,
+      "title": "End Y",
+      "type": "number"
+    },
+    "outcome": {
+      "$ref": "#/$defs/EventOutcome",
+      "default": "won"
+    }
+  },
+  "required": [
+    "timestamp",
+    "team",
+    "player",
+    "x",
+    "y",
+    "end_x",
+    "end_y"
+  ],
+  "title": "DribbleEvent",
+  "type": "object"
+}
