@@ -34,41 +34,30 @@ import csv
 import io
 import json
 from pathlib import Path
-from typing import Any, Optional, Sequence, Union
+from typing import Any
 
 from pydantic import ValidationError
 
 from .ontology import (
-    SCHEMA_VERSION,
     DEFAULT_PITCH_LENGTH,
     DEFAULT_PITCH_WIDTH,
-    EventType,
-    EventOutcome,
-    Foot,
+    SCHEMA_VERSION,
     BodyPart,
-    PassType,
-    SetPieceType,
+    Card,
+    EventOutcome,
+    EventType,
+    Foot,
     GoalkeeperActionType,
     HeaderAction,
-    Card,
+    PassType,
+    SetPieceType,
 )
 from .schema import (
-    AnyEvent,
+    EVENT_MODEL_MAP,
     EventBase,
     MatchEventStream,
     MatchMetadata,
-    EVENT_MODEL_MAP,
-    TouchEvent,
-    PassEvent,
-    ShotEvent,
-    DribbleEvent,
-    TackleEvent,
-    HeaderEvent,
-    FoulEvent,
-    GoalkeeperEvent,
-    SetPieceEvent,
 )
-
 
 # ── validation ───────────────────────────────────────────────────────────────
 
@@ -150,7 +139,7 @@ def validate_single_event(data: dict[str, Any]) -> ValidationResult:
 
 def write_json(
     stream: MatchEventStream,
-    path: Union[str, Path],
+    path: str | Path,
     indent: int = 2,
 ) -> None:
     """
@@ -164,7 +153,7 @@ def write_json(
 
 
 def read_json(
-    source: Union[str, Path, io.StringIO],
+    source: str | Path | io.StringIO,
     strict: bool = True,
 ) -> MatchEventStream:
     """
@@ -179,7 +168,7 @@ def read_json(
     if isinstance(source, io.StringIO):
         data = json.load(source)
     else:
-        with open(source, "r", encoding="utf-8") as f:
+        with open(source, encoding="utf-8") as f:
             data = json.load(f)
 
     if strict:
@@ -212,7 +201,7 @@ _CSV_COLUMNS = [
 
 def write_csv(
     stream: MatchEventStream,
-    path: Union[str, Path],
+    path: str | Path,
 ) -> None:
     """
     Write a validated MatchEventStream to CSV.
@@ -241,9 +230,9 @@ def write_csv(
 
 
 def read_csv(
-    source: Union[str, Path, io.StringIO],
-    home_team: Optional[str] = None,
-    away_team: Optional[str] = None,
+    source: str | Path | io.StringIO,
+    home_team: str | None = None,
+    away_team: str | None = None,
     pitch_length: float = DEFAULT_PITCH_LENGTH,
     pitch_width:  float = DEFAULT_PITCH_WIDTH,
     strict: bool = True,
@@ -267,7 +256,7 @@ def read_csv(
     if isinstance(source, io.StringIO):
         text = source.read()
     else:
-        with open(source, "r", encoding="utf-8") as f:
+        with open(source, encoding="utf-8") as f:
             text = f.read()
 
     # parse metadata from comment line if present
@@ -343,7 +332,7 @@ def _s(v) -> str:
     return str(v).strip()
 
 
-def _safe_float(v, default: float = 0.0) -> Optional[float]:
+def _safe_float(v, default: float = 0.0) -> float | None:
     s = _s(v)
     if not s:
         return None

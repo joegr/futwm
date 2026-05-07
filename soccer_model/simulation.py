@@ -6,17 +6,20 @@ Builds on TransitionModel to generate complete synthetic match event logs.
 
 from __future__ import annotations
 
-import math
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass
 
 import numpy as np
 
-from .events import AnyEvent, EventType, EventOutcome, SetPiece, SetPieceType
+from .events import AnyEvent, EventType
 from .pitch import Pitch
 from .stochastic import TransitionModel
 from .world_model import (
-    WorldState, GameState, BallState, PlayerState, GamePhase, PossessionPhase,
+    BallState,
+    GamePhase,
+    GameState,
+    PlayerState,
+    PossessionPhase,
+    WorldState,
 )
 
 
@@ -28,9 +31,9 @@ class MatchResult:
     away_team:    str
     home_score:   int
     away_score:   int
-    events:       List[AnyEvent]
-    total_xg:     Dict[str, float]   # keyed by team name
-    n_shots:      Dict[str, int]
+    events:       list[AnyEvent]
+    total_xg:     dict[str, float]   # keyed by team name
+    n_shots:      dict[str, int]
 
     def summary(self) -> str:
         return (
@@ -63,10 +66,10 @@ class MatchSimulator:
         pitch: Pitch,
         home_team:    str = "home",
         away_team:    str = "away",
-        home_players: Optional[List[str]] = None,
-        away_players: Optional[List[str]] = None,
+        home_players: list[str] | None = None,
+        away_players: list[str] | None = None,
         dt:           float = 4.0,
-        seed:         Optional[int] = None,
+        seed:         int | None = None,
     ) -> None:
         self.pitch        = pitch
         self.home_team    = home_team
@@ -91,7 +94,7 @@ class MatchSimulator:
         duration : float   Total match time in seconds.
         """
         state  = self._initial_state()
-        events: List[AnyEvent] = []
+        events: list[AnyEvent] = []
 
         t = 0.0
         while t < duration:
@@ -122,7 +125,7 @@ class MatchSimulator:
         self,
         state: WorldState,
         max_events: int = 30,
-    ) -> Tuple[List[AnyEvent], WorldState]:
+    ) -> tuple[list[AnyEvent], WorldState]:
         """
         Simulate one possession chain until the ball is lost or out of play.
 
@@ -130,7 +133,7 @@ class MatchSimulator:
         -------
         (events_in_chain, final_world_state)
         """
-        events: List[AnyEvent] = []
+        events: list[AnyEvent] = []
         team   = state.possession_team
 
         for _ in range(max_events):
@@ -261,9 +264,9 @@ class MatchSimulator:
     # ── result aggregation ────────────────────────────────────────────────────
 
     @staticmethod
-    def _build_result(state: WorldState, events: List[AnyEvent]) -> MatchResult:
-        total_xg: Dict[str, float] = {}
-        n_shots:  Dict[str, int]   = {}
+    def _build_result(state: WorldState, events: list[AnyEvent]) -> MatchResult:
+        total_xg: dict[str, float] = {}
+        n_shots:  dict[str, int]   = {}
         for e in events:
             if e.event_type == EventType.SHOT:
                 xg = getattr(e, "xg", 0.0)
@@ -284,13 +287,13 @@ class MatchSimulator:
 
 def _formation_442(
     length: float, width: float, attacking_right: bool
-) -> List[Tuple[float, float]]:
+) -> list[tuple[float, float]]:
     """
     Return 11 (x, y) positions for a 4-4-2 formation.
     attacking_right=True  → home side, GK at x≈0, strikers at x≈length*0.85
     attacking_right=False → away side, mirrored
     """
-    w2 = width / 2.0
+    width / 2.0
     positions_norm = [
         # GK
         (0.05, 0.50),

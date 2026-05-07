@@ -16,7 +16,7 @@ Version history
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Final
 
 # ── schema version ───────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ GOAL_HEIGHT:          Final[float] = 2.44
 
 # ── event type taxonomy ──────────────────────────────────────────────────────
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     """
     Top-level event classification.
 
@@ -61,14 +61,14 @@ class EventType(str, Enum):
     SET_PIECE         = "set_piece"
 
 
-class Foot(str, Enum):
+class Foot(StrEnum):
     """Foot used for the action."""
     LEFT  = "left"
     RIGHT = "right"
     BOTH  = "both"
 
 
-class BodyPart(str, Enum):
+class BodyPart(StrEnum):
     """Body part making contact with the ball."""
     LEFT_FOOT  = "left_foot"
     RIGHT_FOOT = "right_foot"
@@ -77,7 +77,7 @@ class BodyPart(str, Enum):
     OTHER      = "other"
 
 
-class EventOutcome(str, Enum):
+class EventOutcome(StrEnum):
     """
     Outcome of the event from the perspective of the acting player.
 
@@ -108,7 +108,7 @@ class EventOutcome(str, Enum):
     FOUL_COMMITTED = "foul_committed"
 
 
-class PassType(str, Enum):
+class PassType(StrEnum):
     """Tactical classification of a pass."""
     SHORT   = "short"       # < 15 m
     LONG    = "long"        # > 32 m
@@ -118,7 +118,7 @@ class PassType(str, Enum):
     BACK    = "back"        # backwards relative to attacking direction
 
 
-class SetPieceType(str, Enum):
+class SetPieceType(StrEnum):
     """Dead-ball restart type."""
     CORNER_KICK = "corner_kick"
     FREE_KICK   = "free_kick"
@@ -128,7 +128,7 @@ class SetPieceType(str, Enum):
     KICK_OFF    = "kick_off"
 
 
-class GoalkeeperActionType(str, Enum):
+class GoalkeeperActionType(StrEnum):
     """Goalkeeper-specific action."""
     SAVE         = "save"
     PUNCH        = "punch"
@@ -137,7 +137,7 @@ class GoalkeeperActionType(str, Enum):
     DIVE         = "dive"
 
 
-class HeaderAction(str, Enum):
+class HeaderAction(StrEnum):
     """Intent of a headed action."""
     PASS      = "pass"
     SHOT      = "shot"
@@ -145,7 +145,7 @@ class HeaderAction(str, Enum):
     FLICK_ON  = "flick_on"
 
 
-class Card(str, Enum):
+class Card(StrEnum):
     """Disciplinary card shown."""
     YELLOW = "yellow"
     RED    = "red"

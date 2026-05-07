@@ -35,21 +35,36 @@ from __future__ import annotations
 import csv
 import io
 from pathlib import Path
-from dataclasses import replace
-from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from .events import (
-    AnyEvent, EventType, EventOutcome, Foot, BodyPart,
-    PassType, SetPieceType, GoalkeeperActionType,
-    BaseEvent, Touch, Pass, Shot, Dribble, Tackle, Header, Foul,
-    GoalkeeperAction, SetPiece,
+    AnyEvent,
+    BodyPart,
+    Dribble,
+    EventOutcome,
+    EventType,
+    Foot,
+    Foul,
+    GoalkeeperAction,
+    GoalkeeperActionType,
+    Header,
+    Pass,
+    PassType,
+    SetPiece,
+    SetPieceType,
+    Shot,
+    Tackle,
+    Touch,
 )
 from .pitch import Pitch
-from .world_model import (
-    WorldState, GameState, BallState, PlayerState, GamePhase, PossessionPhase,
-)
 from .stochastic import TransitionModel
-
+from .world_model import (
+    BallState,
+    GamePhase,
+    GameState,
+    PlayerState,
+    PossessionPhase,
+    WorldState,
+)
 
 # ── column name normalisation ─────────────────────────────────────────────────
 
@@ -59,13 +74,13 @@ def _norm_key(k: str) -> str:
 
 # ── enum look-ups ─────────────────────────────────────────────────────────────
 
-_EVENT_TYPE_MAP: Dict[str, EventType] = {e.value: e for e in EventType}
-_OUTCOME_MAP:    Dict[str, EventOutcome] = {e.value: e for e in EventOutcome}
-_FOOT_MAP:       Dict[str, Foot] = {e.value: e for e in Foot}
-_BODY_PART_MAP:  Dict[str, BodyPart] = {e.value: e for e in BodyPart}
-_PASS_TYPE_MAP:  Dict[str, PassType] = {e.value: e for e in PassType}
-_SP_TYPE_MAP:    Dict[str, SetPieceType] = {e.value: e for e in SetPieceType}
-_GK_ACTION_MAP:  Dict[str, GoalkeeperActionType] = {e.value: e for e in GoalkeeperActionType}
+_EVENT_TYPE_MAP: dict[str, EventType] = {e.value: e for e in EventType}
+_OUTCOME_MAP:    dict[str, EventOutcome] = {e.value: e for e in EventOutcome}
+_FOOT_MAP:       dict[str, Foot] = {e.value: e for e in Foot}
+_BODY_PART_MAP:  dict[str, BodyPart] = {e.value: e for e in BodyPart}
+_PASS_TYPE_MAP:  dict[str, PassType] = {e.value: e for e in PassType}
+_SP_TYPE_MAP:    dict[str, SetPieceType] = {e.value: e for e in SetPieceType}
+_GK_ACTION_MAP:  dict[str, GoalkeeperActionType] = {e.value: e for e in GoalkeeperActionType}
 
 
 def _get(row: dict, key: str, default=""):
@@ -81,7 +96,7 @@ def _float(row: dict, key: str, default: float = 0.0) -> float:
 
 # ── row → Event ──────────────────────────────────────────────────────────────
 
-def _row_to_event(row: dict, pitch: Pitch, seq: int) -> Optional[AnyEvent]:
+def _row_to_event(row: dict, pitch: Pitch, seq: int) -> AnyEvent | None:
     """Convert a single normalised CSV row dict to a concrete event object."""
     raw_type = _get(row, "event_type").strip().lower()
     etype = _EVENT_TYPE_MAP.get(raw_type)
@@ -206,11 +221,11 @@ class MatchCSV:
 
     def __init__(
         self,
-        events: List[AnyEvent],
-        teams: List[str],
-        players: Dict[str, str],
+        events: list[AnyEvent],
+        teams: list[str],
+        players: dict[str, str],
         pitch: Pitch,
-        states: List[WorldState],
+        states: list[WorldState],
     ) -> None:
         self.events  = events
         self.teams   = teams
@@ -218,7 +233,7 @@ class MatchCSV:
         self.pitch   = pitch
         self.states  = states
 
-    def to_json(self) -> List[dict]:
+    def to_json(self) -> list[dict]:
         """Serialise events as a list of plain dicts (JSON-friendly)."""
         out = []
         for i, ev in enumerate(self.events):
@@ -263,10 +278,10 @@ class MatchCSV:
 
 
 def load_csv(
-    source: Union[str, Path, io.StringIO],
-    pitch: Optional[Pitch] = None,
-    home_team: Optional[str] = None,
-    away_team: Optional[str] = None,
+    source: str | Path | io.StringIO,
+    pitch: Pitch | None = None,
+    home_team: str | None = None,
+    away_team: str | None = None,
 ) -> MatchCSV:
     """
     Parse a CSV source into a MatchCSV.
@@ -288,7 +303,7 @@ def load_csv(
     if isinstance(source, io.StringIO):
         reader = csv.DictReader(source)
     else:
-        with open(source, "r", newline="", encoding="utf-8") as f:
+        with open(source, newline="", encoding="utf-8") as f:
             text = f.read()
         reader = csv.DictReader(io.StringIO(text))
 
@@ -296,7 +311,7 @@ def load_csv(
 
     # detect teams & players
     team_set: dict[str, None] = {}
-    player_map: Dict[str, str] = {}
+    player_map: dict[str, str] = {}
     for r in rows:
         t = _get(r, "team")
         p = _get(r, "player")
@@ -312,14 +327,14 @@ def load_csv(
     at = away_team or (teams[1] if len(teams) > 1 else "away")
 
     # parse events
-    events: List[AnyEvent] = []
+    events: list[AnyEvent] = []
     for seq, r in enumerate(rows):
         ev = _row_to_event(r, pitch, seq)
         if ev is not None:
             events.append(ev)
 
     # build world-state timeline
-    states: List[WorldState] = []
+    states: list[WorldState] = []
     state  = _initial_state(pitch, ht, at, player_map)
     for ev in events:
         states.append(state.snapshot())
@@ -338,7 +353,7 @@ def _initial_state(
     pitch: Pitch,
     home: str,
     away: str,
-    player_map: Dict[str, str],
+    player_map: dict[str, str],
 ) -> WorldState:
     gs = GameState(home_team=home, away_team=away, phase=GamePhase.FIRST_HALF)
     ball = BallState(

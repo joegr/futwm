@@ -10,16 +10,23 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Dict, List, Optional, Tuple
 
 from .events import (
-    AnyEvent, EventType, EventOutcome,
-    Touch, Pass, Shot, Dribble, Tackle, Header, Foul,
-    GoalkeeperAction, SetPiece,
+    AnyEvent,
+    Dribble,
+    EventOutcome,
+    Foul,
+    GoalkeeperAction,
+    Header,
+    Pass,
+    SetPiece,
+    Shot,
+    Tackle,
+    Touch,
 )
-from .pitch import Pitch, PitchZone, PitchArea
+from .pitch import Pitch, PitchArea, PitchZone
 
-Vector2D = Tuple[float, float]
+Vector2D = tuple[float, float]
 
 
 # ── enumerations ─────────────────────────────────────────────────────────────
@@ -111,8 +118,8 @@ class BallState:
     vy:                  float           = 0.0
     vz:                  float           = 0.0
     in_play:             bool            = True
-    possessing_team:     Optional[str]   = None
-    possessing_player:   Optional[str]   = None
+    possessing_team:     str | None   = None
+    possessing_player:   str | None   = None
 
     def position_2d(self) -> Vector2D:
         return (self.x, self.y)
@@ -185,10 +192,10 @@ class WorldState:
     pitch:               Pitch
     game_state:          GameState                         = field(default_factory=GameState)
     ball:                BallState                         = field(default_factory=BallState)
-    players:             Dict[str, PlayerState]            = field(default_factory=dict)
-    possession_team:     Optional[str]                     = None
+    players:             dict[str, PlayerState]            = field(default_factory=dict)
+    possession_team:     str | None                     = None
     possession_phase:    PossessionPhase                   = PossessionPhase.BUILD_UP
-    event_history:       List[AnyEvent]                    = field(default_factory=list)
+    event_history:       list[AnyEvent]                    = field(default_factory=list)
     consecutive_passes:  int                               = 0
 
     # ── helpers ───────────────────────────────────────────────────────────────
@@ -196,26 +203,26 @@ class WorldState:
     def add_player(self, player: PlayerState) -> None:
         self.players[player.player_id] = player
 
-    def get_player(self, player_id: str) -> Optional[PlayerState]:
+    def get_player(self, player_id: str) -> PlayerState | None:
         return self.players.get(player_id)
 
-    def players_for_team(self, team: str) -> List[PlayerState]:
+    def players_for_team(self, team: str) -> list[PlayerState]:
         return [p for p in self.players.values() if p.team == team]
 
-    def opponent_positions(self, team: str) -> List[Vector2D]:
+    def opponent_positions(self, team: str) -> list[Vector2D]:
         """All positions of opponents relative to `team`."""
         opp = self.game_state.away_team if team == self.game_state.home_team else self.game_state.home_team
         return [p.position() for p in self.players_for_team(opp)]
 
-    def ball_carrier(self) -> Optional[PlayerState]:
+    def ball_carrier(self) -> PlayerState | None:
         return self.players.get(self.ball.possessing_player or "")
 
-    def pitch_zone(self, attacking_direction: int = 1) -> Optional[PitchZone]:
+    def pitch_zone(self, attacking_direction: int = 1) -> PitchZone | None:
         if not self.ball.in_play:
             return None
         return self.pitch.zone(self.ball.x, attacking_direction)
 
-    def pitch_area(self) -> Optional[PitchArea]:
+    def pitch_area(self) -> PitchArea | None:
         if not self.ball.in_play:
             return None
         return self.pitch.area(self.ball.x, self.ball.y)
@@ -226,7 +233,7 @@ class WorldState:
         opp_positions = self.opponent_positions(self.ball.possessing_team)
         return self.pitch.pressure_index(self.ball.position_2d(), opp_positions)
 
-    def snapshot(self) -> "WorldState":
+    def snapshot(self) -> WorldState:
         """Deep copy of the current state (useful for Monte Carlo rollouts)."""
         return copy.deepcopy(self)
 
@@ -324,7 +331,7 @@ class WorldState:
 
     # ── feature extraction (consumed by TransitionModel) ─────────────────────
 
-    def feature_vector(self) -> "dict[str, float]":
+    def feature_vector(self) -> dict[str, float]:
         """
         Compact numerical feature set describing the current world state.
         Used as input to the stochastic transition model.

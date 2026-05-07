@@ -26,19 +26,32 @@ covariances are conditioned on:
 from __future__ import annotations
 
 import math
-import numpy as np
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence, Tuple
+
+import numpy as np
 
 from .events import (
-    EventType, EventOutcome, Foot, BodyPart, PassType, SetPieceType,
-    Touch, Pass, Shot, Dribble, Tackle, Header, Foul,
-    GoalkeeperAction, SetPiece,
     AnyEvent,
+    BodyPart,
+    Dribble,
+    EventOutcome,
+    EventType,
+    Foot,
+    Foul,
+    GoalkeeperAction,
+    Header,
+    Pass,
+    PassType,
+    SetPiece,
+    SetPieceType,
+    Shot,
+    Tackle,
+    Touch,
 )
-from .world_model import WorldState, PossessionPhase
+from .world_model import PossessionPhase, WorldState
 
-Vector2D = Tuple[float, float]
+Vector2D = tuple[float, float]
 
 # ── prior event-type transition weights ──────────────────────────────────────
 #
@@ -48,7 +61,7 @@ Vector2D = Tuple[float, float]
 # These are *unnormalised* weights; TransitionModel normalises them and
 # applies feature-based modifiers before sampling.
 
-_EVENT_TYPES: List[EventType] = [
+_EVENT_TYPES: list[EventType] = [
     EventType.PASS,
     EventType.TOUCH,
     EventType.SHOT,
@@ -92,10 +105,10 @@ class EventDistribution:
     """
 
     probs:       np.ndarray
-    event_types: List[EventType]
+    event_types: list[EventType]
     dest_mean:   Vector2D
     dest_cov:    np.ndarray
-    outcome_p:   Dict[EventType, Dict[EventOutcome, float]] = field(default_factory=dict)
+    outcome_p:   dict[EventType, dict[EventOutcome, float]] = field(default_factory=dict)
 
     def sample_event_type(self, rng: np.random.Generator) -> EventType:
         """Draw one event type from the categorical distribution."""
@@ -107,7 +120,7 @@ class EventDistribution:
         pt = rng.multivariate_normal(list(self.dest_mean), self.dest_cov)
         return (float(pt[0]), float(pt[1]))
 
-    def top_k(self, k: int = 3) -> List[Tuple[EventType, float]]:
+    def top_k(self, k: int = 3) -> list[tuple[EventType, float]]:
         """Return the k most probable event types with their probabilities."""
         order = np.argsort(self.probs)[::-1]
         return [(self.event_types[i], float(self.probs[i])) for i in order[:k]]
@@ -127,7 +140,7 @@ class TransitionModel:
     >>> events = model.sample_n(world_state, n=5)  # n independent samples
     """
 
-    def __init__(self, pitch, seed: Optional[int] = None) -> None:
+    def __init__(self, pitch, seed: int | None = None) -> None:
         self.pitch = pitch
         self.rng   = np.random.default_rng(seed)
         self._base_weights = _BASE_WEIGHTS.copy()
@@ -156,7 +169,7 @@ class TransitionModel:
         dest       = self.pitch.clamp(*dest)
         return self._build_event(state, event_type, dest, dist)
 
-    def sample_n(self, state: WorldState, n: int = 10) -> List[AnyEvent]:
+    def sample_n(self, state: WorldState, n: int = 10) -> list[AnyEvent]:
         """Sample *n* independent next-event candidates (does not chain them)."""
         return [self.sample(state) for _ in range(n)]
 
@@ -231,7 +244,7 @@ class TransitionModel:
         self,
         state: WorldState,
         feats: dict,
-    ) -> Tuple[Vector2D, np.ndarray]:
+    ) -> tuple[Vector2D, np.ndarray]:
         """
         Return (mean, cov) for the bivariate Gaussian over ball destination.
 
@@ -241,7 +254,6 @@ class TransitionModel:
         bx, by = state.ball.x, state.ball.y
         phase  = state.possession_phase
 
-        goal_x  = self.pitch.length     # attacking goal x
         goal_y  = self.pitch.width / 2.0
 
         if phase == PossessionPhase.BUILD_UP:
@@ -280,7 +292,7 @@ class TransitionModel:
         self,
         state: WorldState,
         feats: dict,
-    ) -> Dict[EventType, Dict[EventOutcome, float]]:
+    ) -> dict[EventType, dict[EventOutcome, float]]:
         dist_goal  = feats["dist_to_goal"]
         goal_angle = feats["goal_angle"]
         pressure   = feats["pressure"]

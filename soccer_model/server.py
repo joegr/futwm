@@ -14,20 +14,16 @@ POST /api/fit           → fit transition model on loaded data
 
 from __future__ import annotations
 
-import json
 import io
-import os
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory, abort
+from flask import Flask, abort, jsonify, request, send_from_directory
 from flask_cors import CORS
 
-from .pitch import Pitch
-from .csv_loader import load_csv, MatchCSV
-from .stochastic import TransitionModel
-from .predictor import EventPredictor
-from .simulation import MatchSimulator
+from .csv_loader import MatchCSV, load_csv
 from .events import EventType
+from .pitch import Pitch
+from .predictor import EventPredictor
 
 # ── app setup ─────────────────────────────────────────────────────────────────
 

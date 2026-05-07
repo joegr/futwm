@@ -10,16 +10,15 @@ Wraps TransitionModel to provide:
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass
 
 import numpy as np
 
-from .events import AnyEvent, EventType, EventOutcome
-from .stochastic import TransitionModel, EventDistribution
+from .events import AnyEvent, EventType
+from .stochastic import EventDistribution, TransitionModel
 from .world_model import WorldState
 
-Beam = List[Tuple[float, List[AnyEvent]]]   # (log_prob, event_sequence)
+Beam = list[tuple[float, list[AnyEvent]]]   # (log_prob, event_sequence)
 
 
 @dataclass
@@ -36,8 +35,8 @@ class Prediction:
     """
 
     distribution:  EventDistribution
-    top_events:    List[AnyEvent]
-    top_probs:     List[float]
+    top_events:    list[AnyEvent]
+    top_probs:     list[float]
     expected_xg:   float
 
     def most_likely(self) -> AnyEvent:
@@ -62,7 +61,7 @@ class EventPredictor:
     seed  : Optional[int]   RNG seed for reproducibility.
     """
 
-    def __init__(self, pitch, seed: Optional[int] = None) -> None:
+    def __init__(self, pitch, seed: int | None = None) -> None:
         self.pitch = pitch
         self.model = TransitionModel(pitch, seed=seed)
 
@@ -78,8 +77,8 @@ class EventPredictor:
         dist        = self.model.predict(state)
         top_types   = dist.top_k(top_k)
 
-        top_events: List[AnyEvent] = []
-        top_probs:  List[float]    = []
+        top_events: list[AnyEvent] = []
+        top_probs:  list[float]    = []
 
         for et, p in top_types:
             dest  = dist.sample_destination(self.model.rng)
@@ -103,7 +102,7 @@ class EventPredictor:
         state: WorldState,
         horizon: int = 5,
         samples: int = 20,
-    ) -> List[List[AnyEvent]]:
+    ) -> list[list[AnyEvent]]:
         """
         Sample `samples` independent event sequences of length `horizon`.
 
@@ -133,20 +132,20 @@ class EventPredictor:
         state: WorldState,
         horizon: int = 4,
         beam_width: int = 3,
-    ) -> List[Tuple[float, List[EventType]]]:
+    ) -> list[tuple[float, list[EventType]]]:
         """
         Beam search over event-type sequences (not full events).
 
         Returns top `beam_width` sequences as (log_probability, [EventType, ...]).
         """
         dist  = self.model.predict(state)
-        beams: List[Tuple[float, List[EventType], WorldState]] = [
+        beams: list[tuple[float, list[EventType], WorldState]] = [
             (math.log(p + 1e-12), [et], state.snapshot())
             for et, p in dist.top_k(beam_width)
         ]
 
         for step in range(1, horizon):
-            candidates: List[Tuple[float, List[EventType], WorldState]] = []
+            candidates: list[tuple[float, list[EventType], WorldState]] = []
             for log_p, seq, s in beams:
                 dist_s = self.model.predict(s)
                 for et, p in dist_s.top_k(beam_width):
@@ -180,8 +179,8 @@ class EventPredictor:
 
     def cumulative_xg(
         self,
-        sequences: List[List[AnyEvent]],
-    ) -> Dict[str, float]:
+        sequences: list[list[AnyEvent]],
+    ) -> dict[str, float]:
         """
         Aggregate xG from a list of sampled sequences.
 
@@ -189,7 +188,7 @@ class EventPredictor:
         -------
         Dict with keys ``"mean_xg"``, ``"max_xg"``, ``"min_xg"``, ``"std_xg"``.
         """
-        xg_values: List[float] = []
+        xg_values: list[float] = []
         for seq in sequences:
             total = sum(
                 getattr(e, "xg", 0.0)

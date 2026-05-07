@@ -23,10 +23,9 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum, auto
-from typing import Optional, Tuple
+from enum import Enum
 
-Vector2D = Tuple[float, float]
+Vector2D = tuple[float, float]
 
 
 # ── enumerations ─────────────────────────────────────────────────────────────
@@ -313,7 +312,7 @@ class Foul(BaseEvent):
     fouled_player: str              = ""
     foul_x:        float            = 0.0
     foul_y:        float            = 0.0
-    card:          Optional[str]    = None
+    card:          str | None    = None
     outcome:       EventOutcome     = EventOutcome.FOUL_COMMITTED
 
 
@@ -333,7 +332,7 @@ class GoalkeeperAction(BaseEvent):
 
     event_type:   EventType                = field(default=EventType.GOALKEEPER_ACTION, init=False)
     action_type:  GoalkeeperActionType     = GoalkeeperActionType.SAVE
-    foot:         Optional[Foot]           = None
+    foot:         Foot | None           = None
     dest_x:       float                    = 0.0
     dest_y:       float                    = 0.0
     outcome:      EventOutcome             = EventOutcome.SAVED
@@ -356,7 +355,7 @@ class SetPiece(BaseEvent):
 
     event_type:      EventType          = field(default=EventType.SET_PIECE, init=False)
     set_piece_type:  SetPieceType       = SetPieceType.FREE_KICK
-    foot:            Optional[Foot]     = None
+    foot:            Foot | None     = None
     to_player:       str                = ""
     dest_x:          float              = 0.0
     dest_y:          float              = 0.0

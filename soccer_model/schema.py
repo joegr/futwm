@@ -16,7 +16,7 @@ Design principles
 from __future__ import annotations
 
 import uuid
-from typing import Annotated, Any, Literal, Optional, Union
+from typing import Annotated, Any, Literal
 
 from pydantic import (
     BaseModel,
@@ -27,19 +27,19 @@ from pydantic import (
 )
 
 from .ontology import (
-    SCHEMA_VERSION,
     DEFAULT_PITCH_LENGTH,
     DEFAULT_PITCH_WIDTH,
-    EventType,
-    EventOutcome,
-    Foot,
+    SCHEMA_VERSION,
+    VALID_OUTCOMES,
     BodyPart,
-    PassType,
-    SetPieceType,
+    Card,
+    EventOutcome,
+    EventType,
+    Foot,
     GoalkeeperActionType,
     HeaderAction,
-    Card,
-    VALID_OUTCOMES,
+    PassType,
+    SetPieceType,
 )
 
 # ── coordinate annotation types ──────────────────────────────────────────────
@@ -202,7 +202,7 @@ class FoulEvent(EventBase):
     """Illegal challenge."""
     event_type:    Literal[EventType.FOUL] = EventType.FOUL
     fouled_player: str                     = Field(min_length=1, description="Player who was fouled")
-    card:          Optional[Card]          = Field(default=None, description="Card shown, if any")
+    card:          Card | None          = Field(default=None, description="Card shown, if any")
     outcome:       EventOutcome            = EventOutcome.FOUL_COMMITTED
 
     @field_validator("outcome")
@@ -217,16 +217,17 @@ class GoalkeeperEvent(EventBase):
     """Goalkeeper-specific action."""
     event_type:     Literal[EventType.GOALKEEPER_ACTION] = EventType.GOALKEEPER_ACTION
     gk_action_type: GoalkeeperActionType                 = GoalkeeperActionType.SAVE
-    foot:           Optional[Foot]                       = Field(default=None, description="Foot used (distributions)")
-    end_x:          Optional[PitchX]                     = Field(default=None, description="Distribution target x")
-    end_y:          Optional[PitchY]                     = Field(default=None, description="Distribution target y")
+    foot:           Foot | None                       = Field(default=None, description="Foot used (distributions)")
+    end_x:          PitchX | None                     = Field(default=None, description="Distribution target x")
+    end_y:          PitchY | None                     = Field(default=None, description="Distribution target y")
     outcome:        EventOutcome                         = EventOutcome.SAVED
 
     @field_validator("outcome")
     @classmethod
     def _check_outcome(cls, v: EventOutcome) -> EventOutcome:
         if v not in VALID_OUTCOMES[EventType.GOALKEEPER_ACTION]:
-            raise ValueError(f"Invalid outcome '{v}' for GoalkeeperAction. Valid: {VALID_OUTCOMES[EventType.GOALKEEPER_ACTION]}")
+            valid = VALID_OUTCOMES[EventType.GOALKEEPER_ACTION]
+            raise ValueError(f"Invalid outcome '{v}' for GoalkeeperAction. Valid: {valid}")
         return v
 
 
@@ -234,10 +235,10 @@ class SetPieceEvent(EventBase):
     """Dead-ball restart."""
     event_type:     Literal[EventType.SET_PIECE] = EventType.SET_PIECE
     set_piece_type: SetPieceType                 = SetPieceType.FREE_KICK
-    foot:           Optional[Foot]               = Field(default=None)
-    to_player:      Optional[str]                = Field(default=None, description="Primary recipient")
-    end_x:          Optional[PitchX]             = Field(default=None, description="Delivery target x")
-    end_y:          Optional[PitchY]             = Field(default=None, description="Delivery target y")
+    foot:           Foot | None               = Field(default=None)
+    to_player:      str | None                = Field(default=None, description="Primary recipient")
+    end_x:          PitchX | None             = Field(default=None, description="Delivery target x")
+    end_y:          PitchY | None             = Field(default=None, description="Delivery target y")
     outcome:        EventOutcome                 = EventOutcome.SUCCESS
 
     @field_validator("outcome")
@@ -251,17 +252,8 @@ class SetPieceEvent(EventBase):
 # ── discriminated union ──────────────────────────────────────────────────────
 
 AnyEvent = Annotated[
-    Union[
-        TouchEvent,
-        PassEvent,
-        ShotEvent,
-        DribbleEvent,
-        TackleEvent,
-        HeaderEvent,
-        FoulEvent,
-        GoalkeeperEvent,
-        SetPieceEvent,
-    ],
+    TouchEvent | PassEvent | ShotEvent | DribbleEvent | TackleEvent
+    | HeaderEvent | FoulEvent | GoalkeeperEvent | SetPieceEvent,
     Field(discriminator="event_type"),
 ]
 
@@ -305,7 +297,7 @@ class MatchEventStream(BaseModel):
     events:   list[AnyEvent]
 
     @model_validator(mode="after")
-    def _check_timestamps_ordered(self) -> "MatchEventStream":
+    def _check_timestamps_ordered(self) -> MatchEventStream:
         for i in range(1, len(self.events)):
             if self.events[i].timestamp < self.events[i - 1].timestamp:
                 raise ValueError(
