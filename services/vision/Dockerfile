@@ -41,8 +41,13 @@ ENV PATH="/opt/venv/bin:${PATH}"
 
 # Install the core soccer-world-model from the local checkout if available,
 # else from PyPI. We pin to the local path for monorepo dev convenience.
+# The root pyproject.toml requires README.md and force-includes frontend/,
+# so both must be present at build time even though the vision service
+# doesn't use the frontend at runtime.
 COPY pyproject.toml /tmp/core/pyproject.toml
+COPY README.md      /tmp/core/README.md
 COPY soccer_model   /tmp/core/soccer_model
+COPY frontend       /tmp/core/frontend
 RUN pip install /tmp/core && \
     if [ -n "$EXTRAS" ]; then \
         pip install ".[${EXTRAS}]" ; \
