@@ -1,0 +1,29 @@
+# Local dev compose for the vision microservice.
+#
+#   docker compose -f services/vision/docker-compose.yml up --build
+#
+# Run from the repository root so the build context can reach the core
+# `soccer_model` package.
+
+services:
+  vision:
+    build:
+      context: ../..              # repo root — Dockerfile copies both packages
+      dockerfile: services/vision/Dockerfile
+      args:
+        EXTRAS: ""                # set to "ml,streaming" to bake in heavy deps
+    image: soccer-vision-service:dev
+    container_name: soccer-vision
+    ports:
+      - "8088:8088"
+    environment:
+      SOCCER_VISION_LOG_LEVEL: "INFO"
+      SOCCER_VISION_HOST: "0.0.0.0"
+      SOCCER_VISION_PORT: "8088"
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8088/v1/healthz', timeout=2).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped

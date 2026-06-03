@@ -1,0 +1,42 @@
+date,home,away,home_goals,away_goals,competition,neutral,venue
+2022-11-22,Argentina,Saudi Arabia,1,2,WC2022_GROUP,1,
+2022-11-23,Japan,Germany,2,1,WC2022_GROUP,1,
+2022-11-25,United States,England,0,0,WC2022_GROUP,1,
+2022-11-27,Spain,Germany,1,1,WC2022_GROUP,1,
+2022-12-01,Japan,Spain,2,1,WC2022_GROUP,1,
+2022-12-03,Netherlands,United States,3,1,WC2022_R16,1,
+2022-12-03,Argentina,Australia,2,1,WC2022_R16,1,
+2022-11-26,Argentina,Mexico,2,0,WC2022_GROUP,1,
+2022-12-04,England,Senegal,3,0,WC2022_R16,1,
+2022-12-05,Brazil,South Korea,4,1,WC2022_R16,1,
+2022-12-05,Portugal,Switzerland,6,1,WC2022_R16,1,
+2022-12-06,Croatia,Japan,1,1,WC2022_R16,1,
+2022-12-06,Morocco,Spain,0,0,WC2022_R16,1,
+2022-12-09,Croatia,Brazil,1,1,WC2022_QF,1,
+2022-12-09,Netherlands,Argentina,2,2,WC2022_QF,1,
+2022-12-10,Morocco,Portugal,1,0,WC2022_QF,1,
+2022-12-10,England,France,1,2,WC2022_QF,1,
+2022-12-13,Argentina,Croatia,3,0,WC2022_SF,1,
+2022-12-14,France,Morocco,2,0,WC2022_SF,1,
+2022-12-18,Argentina,France,3,3,WC2022_FINAL,1,
+2024-06-20,Argentina,Canada,2,0,COPA2024_GROUP,1,
+2024-06-15,Germany,Scotland,5,1,EURO2024_GROUP,0,Germany
+2024-06-15,Spain,Croatia,3,0,EURO2024_GROUP,1,
+2024-06-23,Switzerland,Germany,1,1,EURO2024_GROUP,1,
+2024-07-04,Spain,Germany,2,1,EURO2024_QF,1,
+2024-07-06,Netherlands,Turkey,2,1,EURO2024_QF,1,
+2024-07-09,Spain,France,2,1,EURO2024_SF,1,
+2024-07-10,Netherlands,England,1,2,EURO2024_SF,1,
+2024-07-09,Uruguay,Colombia,0,1,COPA2024_SF,1,
+2024-07-09,Argentina,Canada,2,0,COPA2024_SF,1,
+2024-07-14,Spain,England,2,1,EURO2024_FINAL,1,
+2024-07-14,Argentina,Colombia,1,0,COPA2024_FINAL,1,
+2025-09-04,Spain,Bulgaria,3,0,WCQUAL2026_UEFA,0,Spain
+2025-09-07,Turkey,Spain,0,6,WCQUAL2026_UEFA,0,Turkey
+2025-10-11,Norway,Israel,5,0,WCQUAL2026_UEFA,0,Norway
+2025-10-11,Germany,Luxembourg,4,0,WCQUAL2026_UEFA,0,Germany
+2025-09-09,Brazil,Chile,3,0,WCQUAL2026_CONMEBOL,0,Brazil
+2025-09-09,Argentina,Ecuador,1,0,WCQUAL2026_CONMEBOL,0,Argentina
+2025-10-10,Uruguay,Colombia,3,0,WCQUAL2026_CONMEBOL,0,Uruguay
+2024-09-05,Argentina,Chile,3,0,WCQUAL2026_CONMEBOL,0,Argentina
+2024-09-10,Colombia,Argentina,2,1,WCQUAL2026_CONMEBOL,0,Colombia

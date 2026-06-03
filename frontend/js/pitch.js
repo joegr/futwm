@@ -229,7 +229,11 @@ const PitchVis = (() => {
       .attr("opacity", (e, i) => 0.3 + 0.7 * (i / visible.length))
       .on("click", (ev, e) => {
         if (opts.onEventClick) opts.onEventClick(e.index);
-      });
+      })
+      .on("dblclick", (ev, e) => {
+        if (opts.onEventDblClick) opts.onEventDblClick(e.index);
+      })
+      .style("cursor", opts.onEventClick || opts.onEventDblClick ? "pointer" : null);
 
     // highlight current event
     const cur = events[currentIndex];
@@ -298,6 +302,32 @@ const PitchVis = (() => {
 
   function clearPredictions() { gPredictions.selectAll("*").remove(); }
 
+  // ── click-to-pitch-metres bridge (used by the editor's pitch picker) ──
+  /**
+   * Translate a browser MouseEvent's clientX/clientY into pitch metres
+   * using the current scales. Returns `{x, y}` clamped to the pitch
+   * extent, or `null` if pitch hasn't been initialised yet.
+   */
+  function pixelEventToMetres(mouseEvent) {
+    if (!svg || !scaleX || !scaleY) return null;
+    const node = svg.node();
+    const rect = node.getBoundingClientRect();
+    const vb   = node.viewBox.baseVal;
+    // Map clientX/Y into viewBox space (handles CSS scaling).
+    const vbX = ((mouseEvent.clientX - rect.left) / rect.width)  * vb.width;
+    const vbY = ((mouseEvent.clientY - rect.top)  / rect.height) * vb.height;
+    let x = scaleX.invert(vbX);
+    let y = scaleY.invert(vbY);
+    x = Math.max(0, Math.min(pitchData.length, x));
+    y = Math.max(0, Math.min(pitchData.width,  y));
+    return { x, y };
+  }
+
   // ── public ────────────────────────────────────────────────────────────
-  return { init, setPitchData, renderEvents, renderHeatmap, clearHeatmap, renderPredictions, clearPredictions };
+  return {
+    init, setPitchData,
+    renderEvents, renderHeatmap, clearHeatmap,
+    renderPredictions, clearPredictions,
+    pixelEventToMetres,
+  };
 })();

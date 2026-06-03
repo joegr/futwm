@@ -1,0 +1,45 @@
+# Local dev compose for the soccer-world-model dashboard.
+#
+#   docker compose up --build
+#
+# Open http://localhost:5050
+#
+# The optional `vision` service brings up the perception microservice on :8088
+# alongside the dashboard. Start everything with:
+#   docker compose --profile full up --build
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: soccer-world-model:dev
+    container_name: soccer-dashboard
+    ports:
+      - "5050:5050"
+    environment:
+      HOST:  "0.0.0.0"
+      PORT:  "5050"
+      DEBUG: "0"
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:5050/api/pitch', timeout=2).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  vision:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: services/vision/Dockerfile
+    image: soccer-vision-service:dev
+    container_name: soccer-vision
+    ports:
+      - "8088:8088"
+    environment:
+      SOCCER_VISION_LOG_LEVEL: "INFO"
+      SOCCER_VISION_HOST: "0.0.0.0"
+      SOCCER_VISION_PORT: "8088"
+    restart: unless-stopped

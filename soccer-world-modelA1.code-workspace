@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "soccer-world-model",
+			"path": "."
+		},
+		{
+			"path": "../windsurf-project-16"
+		}
+	],
+	"settings": {},
+	"workbenchMode": "windsurf-agent-window"
+}

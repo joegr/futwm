@@ -1,0 +1,38 @@
+# VCS
+.git
+.gitignore
+
+# Editors / IDE
+.idea
+.vscode
+.windsurf
+
+# Python build / cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.egg-info
+build
+dist
+.venv
+venv
+.env
+
+# Tests & docs (not needed in the runtime image)
+tests
+docs
+htmlcov
+.coverage
+
+# Vision sub-service has its own build context
+services/vision/__pycache__
+services/vision/.pytest_cache
+
+# Misc
+*.log
+*.swp
+.DS_Store

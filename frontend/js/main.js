@@ -2,7 +2,7 @@
  * main.js — application entry-point, data flow, and transport controls.
  */
 
-/* global PitchVis, Charts, d3 */
+/* global PitchVis, Charts, EditorUI, d3 */
 
 const App = (() => {
   const API = "";  // same origin
@@ -40,6 +40,30 @@ const App = (() => {
     }
 
     _bindControls();
+
+    // editor drawer — depends on pitch being initialised first so we can
+    // route pitch clicks to the form picker.
+    if (typeof EditorUI !== "undefined") {
+      EditorUI.init({
+        onMatchUpdated: _onMatchUpdatedFromEditor,
+        onPickXY:  () => {},   // armed state is held inside EditorUI
+        onPickEnd: () => {},
+        // Used by the form's "⤓ Load current" button.
+        getCurrentEvent: () => events[currentIndex] || null,
+      });
+    }
+  }
+
+  // ── editor integration ────────────────────────────────────────────────
+  function _onMatchUpdatedFromEditor(newEvents) {
+    events = newEvents || [];
+    currentIndex = Math.min(currentIndex, Math.max(events.length - 1, 0));
+    $matchLabel.textContent = `${teams[0] || "?"} vs ${teams[1] || "?"} — ${events.length} events`;
+    $slider.max   = Math.max(events.length - 1, 0);
+    _renderFrame();
+    _buildEventList();
+    _fetchXgTimeline();
+    _fetchPassNetwork();
   }
 
   // ── data loading ──────────────────────────────────────────────────────
@@ -116,6 +140,9 @@ const App = (() => {
       shots:  document.getElementById("chk-shots").checked,
       team:   $teamFilter.value,
       onEventClick: goToEvent,
+      onEventDblClick: (i) => {
+        if (typeof EditorUI !== "undefined") EditorUI.openForEdit(i, events[i]);
+      },
     };
     PitchVis.renderEvents(events, currentIndex, opts);
 
@@ -180,6 +207,10 @@ const App = (() => {
         `<span class="ev-detail">${detail}</span>`;
 
       row.addEventListener("click", () => goToEvent(i));
+      row.addEventListener("dblclick", () => {
+        if (typeof EditorUI !== "undefined") EditorUI.openForEdit(i, events[i]);
+      });
+      row.title = "Click to jump, double-click to edit";
       $eventList.appendChild(row);
     });
   }
@@ -286,6 +317,14 @@ const App = (() => {
     });
     $teamFilter.addEventListener("change", () => { _renderFrame(); _fetchHeatmap(); });
     $passnetTeam.addEventListener("change", () => _fetchPassNetwork());
+
+    // Pitch click — when the editor's picker is armed, forward the
+    // clicked location (in metres) to fill the active form fields.
+    document.getElementById("pitch-container").addEventListener("click", (ev) => {
+      if (typeof EditorUI === "undefined" || !EditorUI.isPickerArmed()) return;
+      const xy = PitchVis.pixelEventToMetres(ev);
+      if (xy) EditorUI.deliverPickedCoords(xy);
+    });
   }
 
   // ── init ──────────────────────────────────────────────────────────────

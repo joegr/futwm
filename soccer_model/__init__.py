@@ -59,6 +59,20 @@ from .schema import (
 )
 from .simulation import MatchSimulator
 from .stochastic import EventDistribution, TransitionModel
+from .tournament import (
+    INITIAL_RATINGS,
+    INITIAL_RATINGS_AS_OF,
+    TEAMS,
+    Confederation,
+    EloPredictor,
+    EloRating,
+    MatchPrediction,
+    Team,
+    evaluate_predictions,
+    get_rating,
+    get_team,
+    load_baseline_matches,
+)
 from .world_model import BallState, GamePhase, GameState, PlayerState, WorldState
 
 
@@ -102,4 +116,9 @@ __all__ = [
     "EventPredictor", "MatchSimulator",
     # convenience
     "load_sample", "MatchCSV",
+    # tournament / WC2026 baseline
+    "TEAMS", "Team", "Confederation",
+    "INITIAL_RATINGS", "INITIAL_RATINGS_AS_OF",
+    "EloRating", "EloPredictor", "MatchPrediction",
+    "get_team", "get_rating", "load_baseline_matches", "evaluate_predictions",
 ]

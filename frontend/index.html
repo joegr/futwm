@@ -18,6 +18,7 @@
       <label class="upload-btn" for="csv-upload">Upload CSV</label>
       <input type="file" id="csv-upload" accept=".csv" hidden />
       <button id="btn-load-sample">Load Sample</button>
+      <button id="btn-toggle-editor" class="ghost" title="Add events or preprocess data">✎ Edit Data</button>
       <span id="match-label" class="match-label">No match loaded</span>
     </div>
   </header>
@@ -96,9 +97,70 @@
     <div id="event-list"></div>
   </section>
 
+  <!-- ── editor drawer (Add / Edit / Preprocess) ─────────────────────── -->
+  <aside id="panel-editor" class="hidden" aria-hidden="true">
+    <header class="editor-header">
+      <div class="editor-tabs" role="tablist">
+        <button class="editor-tab active" data-tab="add"        role="tab">Add / Edit Event</button>
+        <button class="editor-tab"        data-tab="preprocess" role="tab">Preprocess</button>
+      </div>
+      <button id="btn-close-editor" class="ghost" title="Close">✕</button>
+    </header>
+
+    <!-- ── Add / Edit Event tab ───────────────────────────────────────── -->
+    <section class="editor-tab-pane active" data-tab="add">
+      <div class="form-row">
+        <span class="form-mode" id="form-mode-label">Adding new event</span>
+        <span class="form-row-actions">
+          <button id="btn-form-load-current" class="ghost small" title="Load the event currently shown on the pitch">⤓ Load current</button>
+          <button id="btn-form-new" class="ghost small" title="Reset to a blank new event">＋ New</button>
+        </span>
+      </div>
+
+      <!-- common fields -->
+      <div class="form-grid" id="form-common"></div>
+
+      <!-- type-specific fields (populated dynamically from /api/ontology) -->
+      <div class="form-grid" id="form-typed"></div>
+
+      <div class="form-actions">
+        <button id="btn-form-pick-xy" class="ghost small" title="Click on the pitch to set x,y">📍 Pick on pitch (x,y)</button>
+        <button id="btn-form-pick-end" class="ghost small" title="Click on the pitch to set end_x,end_y">📍 Pick end (end_x,end_y)</button>
+        <button id="btn-form-validate" class="ghost">Validate</button>
+        <button id="btn-form-save"  class="primary">Save event</button>
+      </div>
+      <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
+    </section>
+
+    <!-- ── Preprocess tab ─────────────────────────────────────────────── -->
+    <section class="editor-tab-pane" data-tab="preprocess">
+      <p class="muted small">
+        Build a pipeline of operations that transform the loaded match
+        (e.g. rename a player, mirror coordinates, convert from Opta % to
+        FIFA metres). Each step runs in order. Preview without committing
+        using the dry-run button.
+      </p>
+
+      <div class="pipeline" id="pipeline-list"></div>
+
+      <div class="pipeline-add">
+        <select id="op-select"></select>
+        <button id="btn-add-op" class="ghost small">＋ Add step</button>
+      </div>
+
+      <div class="form-actions">
+        <button id="btn-pipeline-clear"  class="ghost">Clear pipeline</button>
+        <button id="btn-pipeline-dryrun" class="ghost">Dry run preview</button>
+        <button id="btn-pipeline-apply"  class="primary">Apply pipeline</button>
+      </div>
+      <div id="pipeline-feedback" class="form-feedback" aria-live="polite"></div>
+    </section>
+  </aside>
+
   <!-- ── scripts ────────────────────────────────────────────────────── -->
   <script src="js/pitch.js"></script>
   <script src="js/charts.js"></script>
+  <script src="js/forms.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
