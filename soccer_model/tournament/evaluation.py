@@ -166,7 +166,7 @@ def calibrate_home_advantage(
     dict
         ``{"best": float, "by_value": {h: result_dict, ...}, "metric": metric}``
     """
-    from .predictor import EloPredictor   # local import to avoid cycle
+    from .predictor import EloPredictor  # local import to avoid cycle
 
     if metric not in ("brier", "log_loss", "accuracy"):
         raise ValueError(f"Unknown metric: {metric!r}")

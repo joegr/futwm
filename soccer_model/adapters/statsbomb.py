@@ -22,10 +22,9 @@ sufficient to populate every required field on
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
-
-import json
 
 from ..ontology import EventType
 from ..schema import (
@@ -52,7 +51,6 @@ from .base import (
     Transport,
 )
 from .registry import register_adapter
-
 
 # StatsBomb publishes ~40 type names. The 12 below are the most frequent
 # and cover ~95% of any match. Unknown names raise KeyError, which is

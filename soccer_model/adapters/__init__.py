@@ -21,6 +21,9 @@ contract.
 
 from __future__ import annotations
 
+# Trigger registration of every shipped adapter. Each module side-effects
+# a ``@register_adapter("...")`` call when imported.
+from . import _registry  # noqa: F401  (import for side effects)
 from .base import (
     CoordinateFrame,
     DirectionConvention,
@@ -37,10 +40,6 @@ from .registry import (
     list_adapters,
     register_adapter,
 )
-
-# Trigger registration of every shipped adapter. Each module side-effects
-# a ``@register_adapter("...")`` call when imported.
-from . import _registry  # noqa: F401  (import for side effects)
 
 __all__ = [
     # ABCs / value types

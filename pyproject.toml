@@ -74,7 +74,11 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
-ignore = ["E741"]
+# E741 — ambiguous variable name (we use `l` for length etc.)
+# UP042 — would force `class X(str, Enum)` → `class X(StrEnum)`, which
+#         changes `str(member)` output and breaks our JSON serialisation
+#         and equality semantics with plain strings.
+ignore = ["E741", "UP042"]
 
 [tool.mypy]
 python_version = "3.11"

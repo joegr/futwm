@@ -15,12 +15,11 @@ POST /api/fit           → fit transition model on loaded data
 from __future__ import annotations
 
 import io
+from dataclasses import asdict
 from pathlib import Path
 
 from flask import Flask, abort, jsonify, request, send_from_directory
 from flask_cors import CORS
-
-from dataclasses import asdict
 
 from . import ontology as ont
 from .csv_loader import MatchCSV, load_csv

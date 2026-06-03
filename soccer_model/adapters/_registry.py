@@ -21,6 +21,9 @@ from typing import Any
 
 from ..ontology import EventType
 from ..schema import MatchEventStream
+
+# Importing this triggers @register_adapter("statsbomb") via side-effect.
+from . import statsbomb  # noqa: F401
 from .base import (
     CoordinateFrame,
     DirectionConvention,
@@ -32,10 +35,6 @@ from .base import (
     Transport,
 )
 from .registry import register_adapter
-
-# Importing this triggers @register_adapter("statsbomb") via side-effect.
-from . import statsbomb  # noqa: F401
-
 
 # ── helper to keep the 19 scaffolds tiny ─────────────────────────────────────
 
